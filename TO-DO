@@ -1,0 +1,48 @@
+/*
+ TO-DO: 
+
+- Trocar char para String
+	-
+
+- inimigos: 
+	- andam no plano cartesino, sempre na mair distancia primeiro, ate o jogodor 
+
+- teletransporte
+	- para outra posicao aleatoria
+
+- life 
+	- porcetagem
+
+- splash screen
+	- desenho anci C
+
+- power up
+	- cerveja, permite destruir robos
+	- aumentar tamanho
+
+- inimigos por pontos (???)
+	-
+
+- Atigir 10 pontos, vai para proxima fase
+	- mapa pode ser diferente
+	- Eric V. (Em Processo)
+		- Falta Arrumar a possicao do jogador e do objeto
+
+- Arrumar ansiGame.h
+	-
+
+- Adicionar Ester Egg
+	-
+
+- Adicionar Blocos no meio da fase
+
+- tamanho da fase inicial dinamico
+	- Eric V.(Em Processo)
+		- Falta arrumar pergunta do tamanho dinamico
+		- Tarefa abortada, pois com robos ira ficar ruim, a menos que na primeira fase nao haja robos
+
+
+
+
+
+ */
