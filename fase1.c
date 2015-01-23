@@ -13,9 +13,16 @@ void desenhaCampoF1(mapa campo){
 		for(y = 0; y < campo.y; y++){	
 
 			attron(COLOR_PAIR(2));
-			printw("%c ", campo.valor[x][y]);
-			attron(COLOR_PAIR(2));
-
+			if(campo.valor[x][y] == 'X'){
+				attron(COLOR_PAIR(4));
+				if(x != 0)
+					printw("%c ", campo.valor[x][y]);
+				else
+					printw("%c-", campo.valor[x][y]);
+				attroff(COLOR_PAIR(4));
+			}else
+				printw("%c ", campo.valor[x][y]);
+			
 			if(x == 0 || y == (campo.y-1) || x == (campo.x-1) || y == 0) //PAREDES
 				campo.valor[x][y] = 'X';
 		}
@@ -36,8 +43,6 @@ game insereObjetoF1(game jogo){
 	
 	jogo.obj.x = x;
 	jogo.obj.y = y;
-
-	jogo.obj.name = 'o';
 
 	jogo.campo.valor[x][y] = jogo.obj.name;
 	return jogo;
@@ -61,29 +66,33 @@ game iniciaFase1(game jogo){
 
 game updateF1(game jogo, int ch){
 	int botDifuldade = 0;
-	int vidas = 3;
+	
 	clear();
-
-	printw("Pontuacao = %d\n", jogo.pontos);
-	desenhaLife(vidas);
+	attron(COLOR_PAIR(1));
+	printw("\t\t\tPontuacao = %d\n", jogo.pontos);
+	attroff(COLOR_PAIR(1));
+	desenhaLife(jogo.pl.life);
 
 	jogo.campo = insereJogadorF1(jogo);
-	jogo = lerAcao(jogo, ch);
+	
 
 	if(botDifuldade < 70){
 		jogo = moverIni(jogo);
 		//botDifuldade = 0;
 	}
+	jogo = lerAcao(jogo, ch);
 
 	desenhaCampoF1(jogo.campo);
 
 	botDifuldade = rand() % 100;
 
-	if(verificaColisao(jogo) == 1){
-		vidas--;
+	if(verificaColisao(jogo)){
+		jogo.pl.life--;
 		botDifuldade = 100;
-		if(vidas == 0){
+		if(jogo.pl.life == -1){
+			endwin();
 			exit(EXIT_FAILURE);
+
 		}
 	}
 	

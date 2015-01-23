@@ -101,7 +101,8 @@ game lerAcao(game jogo, int tecla){
 	} else if(tecla == KEY_UP){
 		jogo = andaCima(jogo);
 	}
-
+	if(jogo.pl.posx == jogo.bot.x && jogo.pl.posy == jogo.bot.y )
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = '@';
 	return jogo;
 }	
 
@@ -110,7 +111,7 @@ int main(){
 	int ch;
 	
 	objeto obj;	
-	obj.name = 'p';
+	obj.name = '#';
 
 	player one;
 	one.posx = 1;
