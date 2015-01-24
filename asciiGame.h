@@ -51,12 +51,12 @@ game verificaFase(game jogo);
 
 game verificaPonto(game jogo);
 
-game andaDireita(game jogo);
+game andaDireita(game jogo,char espaco);
 
-game andaEsquerda(game jogo);
+game andaEsquerda(game jogo,char espaco);
 
-game andaBaixo(game jogo);
+game andaBaixo(game jogo,char espaco);
 
-game andaCima(game jogo);
+game andaCima(game jogo,char espaco);
 
 game lerAcao(game jogo, int tecla);
