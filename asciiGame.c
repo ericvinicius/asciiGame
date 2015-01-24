@@ -1,32 +1,33 @@
 #include "asciiGame.h"
 #include "padroes.c"
-#include "fase1.c"
-#include "fase2.c"
+#include "fase.c"
+
 
 //Aloca espaco necessario para a matriz e coloca um espaco em cada local
-mapa limpaMatriz(mapa campo){
+game limpaMatriz(game jogo){
 	int x, y;
 
 	//Alocar memoria para uma matriz
-	campo.valor = mallocc(campo.x * sizeof(char *));
-	for(x = 0; x <= campo.x; x++){
-		campo.valor[x] = mallocc(campo.y * sizeof(char));
+	jogo.campo.valor = mallocc(jogo.campo.x * sizeof(char *));
+	for(x = 0; x <= jogo.campo.x; x++){
+		jogo.campo.valor[x] = mallocc(jogo.campo.y * sizeof(char));
+		// TO - DO : E possivel reduzir o outros dois fors, por um unico aqui!!!
 	}
 
-	for(x = 0; x < campo.x; x++){
-		for(y = 0; y < campo.y; y++){
-				campo.valor[x][y] = ' ';
+	for(x = 0; x < jogo.campo.x; x++){
+		for(y = 0; y < jogo.campo.y; y++){
+				jogo.campo.valor[x][y] = ' ';
 		}
 	}
-	return campo;
+	return jogo;
 }
 
 game verificaFase(game jogo){
 	if(jogo.fase == 1)
-		jogo = insereObjetoF1(jogo);
+		jogo = insereObjeto(jogo);
 
 	if(jogo.fase == 2)
-		jogo = insereObjetoF2(jogo);
+		jogo = insereObjeto(jogo);
 
 
 	return jogo;
@@ -44,7 +45,7 @@ game verificaPonto(game jogo){
 
 //O poersonagem anda para direita(verificando se nao e uma parece e se ele marcou um ponto)
 game andaDireita(game jogo){
-	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy+1] != 'X'){
+	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy+1] != jogo.campo.parede){
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy+1] = jogo.pl.name;
 		jogo.pl.posy++;
@@ -55,7 +56,7 @@ game andaDireita(game jogo){
 
 //O poersonagem anda para esquerda(verificando se nao e uma parece e se ele marcou um ponto)
 game andaEsquerda(game jogo){
-	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy-1] != 'X'){
+	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy-1] != jogo.campo.parede){
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy-1] = jogo.pl.name;
 		jogo.pl.posy--;
@@ -66,7 +67,7 @@ game andaEsquerda(game jogo){
 
 //O poersonagem anda para baixo(verificando se nao e uma parece e se ele marcou um ponto)
 game andaBaixo(game jogo){
-	if(jogo.campo.valor[jogo.pl.posx+1][jogo.pl.posy] != 'X'){
+	if(jogo.campo.valor[jogo.pl.posx+1][jogo.pl.posy] != jogo.campo.parede){
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
 		jogo.campo.valor[jogo.pl.posx+1][jogo.pl.posy] = jogo.pl.name;
 		jogo.pl.posx++;
@@ -77,7 +78,7 @@ game andaBaixo(game jogo){
 
 //O poersonagem anda para cima(verificando se nao e uma parece e se ele marcou um ponto)
 game andaCima(game jogo){
-	if(jogo.campo.valor[jogo.pl.posx-1][jogo.pl.posy] != 'X'){
+	if(jogo.campo.valor[jogo.pl.posx-1][jogo.pl.posy] != jogo.campo.parede){
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
 		jogo.campo.valor[jogo.pl.posx-1][jogo.pl.posy] = jogo.pl.name;
 		jogo.pl.posx--;
@@ -88,6 +89,8 @@ game andaCima(game jogo){
 
 //Le acao do usuario chama a funcao que faz ele andar
 game lerAcao(game jogo, int tecla){
+
+	//printw("(%d / %d)", jogo.pl.posx, jogo.pl.posy);
 
 	if(tecla == KEY_RIGHT){
 		jogo = andaDireita(jogo);
@@ -101,14 +104,19 @@ game lerAcao(game jogo, int tecla){
 	} else if(tecla == KEY_UP){
 		jogo = andaCima(jogo);
 	}
+
+	//TO - DO : nem sempre mostra a batida
 	if(jogo.pl.posx == jogo.bot.x && jogo.pl.posy == jogo.bot.y )
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = '@';
+
 	return jogo;
 }	
 
 int main(){
 	mapa campo;
+	campo.parede = 'X';
 	int ch;
+	int cont = 0;
 	
 	objeto obj;	
 	obj.name = '#';
@@ -141,19 +149,16 @@ int main(){
 	jogo = iniciaFase1(jogo);
 
 	while ((ch = getch()) != 'c') {
-		if(jogo.fase == 1){
-			jogo = updateF1(jogo, ch);
+		
+		jogo = update(jogo, ch);
 
-			if(jogo.pontos > 2){	
-				printw("Ganhou! - Vamos para fase 2!\n");
-				refresh();
-				jogo = iniciaFase2(jogo);
-			}
-
-		} else {
-
-			jogo = updateF2(jogo, ch); 
+		if(jogo.pontos == 1 && cont == 0){	
+			printw("Ganhou! - Vamos para fase 2!\n");
+			cont++;
+			refresh();
+			jogo = iniciaFase2(jogo);
 		}
+ 
 	}
 
 	

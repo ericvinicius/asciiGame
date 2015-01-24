@@ -1,0 +1,169 @@
+#include "fase.h"
+
+game insereJogador(game jogo){
+	jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = jogo.pl.name;
+
+	return jogo;
+}
+
+game desenhaFase1(game jogo, int x, int y){
+
+	if(x == 0 || y == (jogo.campo.y-1) || x == (jogo.campo.x-1) || y == 0) //PAREDES
+		jogo.campo.valor[x][y] = jogo.campo.parede;
+
+	return jogo;
+}
+
+game desenhaFase2(game jogo, int x, int y){
+
+	if(y == (jogo.campo.y / 2) - x || x == (jogo.campo.x-1) || y == (jogo.campo.y / 2) + x) //PAREDES
+		jogo.campo.valor[x][y] = jogo.campo.parede;
+
+	return jogo;
+}
+
+//Desenha o campo com o personagem e as paredes
+//x = linha 
+//y = coluna
+game desenhaCampo(game jogo){
+	int x, y;
+
+	for(x = 0; x < jogo.campo.x; x++){
+		for(y = 0; y < jogo.campo.y; y++){	
+			attron(COLOR_PAIR(2));
+
+			if(jogo.campo.valor[x][y] == jogo.campo.parede){
+				attron(COLOR_PAIR(4));
+
+				if(x != 0)
+					printw("%c ", jogo.campo.valor[x][y]);
+
+				else
+					printw("%c ", jogo.campo.valor[x][y]);
+
+				attroff(COLOR_PAIR(4));
+
+			}else
+				printw("%c ", jogo.campo.valor[x][y]);
+			
+			if(jogo.fase == 1)
+				jogo = desenhaFase1(jogo, x, y);
+
+			if(jogo.fase == 2)
+				jogo = desenhaFase2(jogo, x, y);
+		}
+		printw("\n");
+	}
+
+	return jogo;
+}
+
+
+
+//insere o objeto dentro do mapa em uma posicao aleatoria
+// c + l >= 21 && c - l <= 19  
+//TO - DO : falta verificar este caso: l < ? && l >= 2
+//c <= 38 && c >= 2
+game insereObjeto(game jogo){
+	int x, y;
+
+	if(jogo.fase == 1){
+
+		do{
+			srand (time(NULL));
+			x = (rand() % (jogo.campo.x-2)) + 1;//coluna
+			y = (rand() % (jogo.campo.y-2)) + 1;//linha
+
+		} while (jogo.pl.posx == x && jogo.pl.posy == y);
+
+	} else if(jogo.fase == 2){
+
+		do{
+			srand (time(NULL));
+			x = (rand() % (jogo.campo.x-2)) + 2;//coluna
+			y = (rand() % (jogo.campo.y-2)) + 1;//linha
+
+		} while ((jogo.pl.posx == x && jogo.pl.posy == y) || (x + y < 21 || x - y > 19));
+	}
+	
+	jogo.obj.x = x;
+	jogo.obj.y = y;
+
+	jogo.campo.valor[x][y] = jogo.obj.name;
+	return jogo;
+}
+
+game iniciaFase1(game jogo){
+	jogo.campo.x = 20;
+	jogo.campo.y = 30;
+	jogo.fase = 1;
+	jogo.pl.posx = 1;
+	jogo.pl.posy = 1;
+
+	clear();
+
+	jogo = limpaMatriz(jogo);
+	jogo = insereObjeto(jogo);
+	jogo = desenhaCampo(jogo);
+
+	return jogo;
+}
+
+game iniciaFase2(game jogo){
+	jogo.campo.x = 21;
+	jogo.campo.y = 40;
+	jogo.fase = 2;
+	jogo.pl.posx = 10;
+	jogo.pl.posy = 20;
+
+	clear();
+
+	jogo = limpaMatriz(jogo);
+	jogo = insereObjeto(jogo);
+	jogo = desenhaCampo(jogo);
+
+	refresh();
+
+	return jogo;
+}
+
+void desenhaCabecalho(game jogo){
+	attron(COLOR_PAIR(1));
+	printw("\t\t\tPontuacao = %d\n", jogo.pontos);
+	attroff(COLOR_PAIR(1));
+	desenhaLife(jogo.pl.life);
+}
+
+game update(game jogo, int ch){
+	int botDifuldade = 0;
+	
+	clear();
+	desenhaCabecalho(jogo);
+
+	jogo = insereJogador(jogo);
+	
+
+	if(botDifuldade < 70){
+		jogo = moverIni(jogo);
+	}
+
+	jogo = lerAcao(jogo, ch);
+	jogo = desenhaCampo(jogo);
+
+	//TO - DO : criar funcao que modifica estas varaintes do bot
+	botDifuldade = rand() % 100;
+
+	if(verificaColisao(jogo)){
+		jogo.pl.life--;
+		botDifuldade = 100;
+		if(jogo.pl.life == -1){
+			endwin();
+			exit(EXIT_FAILURE);
+
+		}
+	}
+	
+	refresh();
+
+	return jogo;
+}

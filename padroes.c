@@ -35,6 +35,11 @@ void desenhaLife(int vidas){
 	printw("\n\n");
 }
 
+//TO - DO : Verificar se e parede para ele andar
+//Tip: a funcao que anda o jogodar, poderia chamar uma funcao verificaParede, que poderia ser utilizado por esta funcao tambem.
+
+//TO - DO : criar funcao verifica objeto para nao apaga-lo
+//Tip: similar a funcao verificaPonto()
 game moverIni(game jogo){
 	int posx,posy,inix,iniy;
 	posx = jogo.pl.posx;
@@ -45,27 +50,27 @@ game moverIni(game jogo){
 
 	int andou = rand() % 100;
 	
-	if(inix > posx && andou < 30 && jogo.campo.valor[inix-1][iniy] != 'X') {
+	if(inix > posx && andou < 30 && jogo.campo.valor[inix-1][iniy] != jogo.campo.parede) {
 		jogo.campo.valor[inix][iniy] = ' ';
-		jogo.campo.valor[inix-1][iniy] = '-';
+		jogo.campo.valor[inix-1][iniy] = jogo.bot.name;
 		jogo.bot.x--;
 		return jogo;
 	}
-	if(inix < posx && andou < 30 && jogo.campo.valor[inix+1][iniy] != 'X'){
+	if(inix < posx && andou < 30 && jogo.campo.valor[inix+1][iniy] != jogo.campo.parede){
 		jogo.campo.valor[inix][iniy] = ' ';
-		jogo.campo.valor[inix+1][iniy] = '-';
+		jogo.campo.valor[inix+1][iniy] = jogo.bot.name;
 		jogo.bot.x++;
 		return jogo;
 	} 
 	
-	if(iniy > posy && jogo.campo.valor[inix][iniy-1] != 'X'){
+	if(iniy > posy && jogo.campo.valor[inix][iniy-1] != jogo.campo.parede){
 		jogo.campo.valor[inix][iniy] = ' ';
-		jogo.campo.valor[inix][iniy-1] = '-';
+		jogo.campo.valor[inix][iniy-1] = jogo.bot.name;
 		jogo.bot.y--;
 		return jogo;
 	}else{
 		jogo.campo.valor[inix][iniy] = ' ';
-		jogo.campo.valor[inix][iniy+1] = '-';
+		jogo.campo.valor[inix][iniy+1] = jogo.bot.name;
 		jogo.bot.y++;
 		return jogo;
 	}
@@ -73,10 +78,9 @@ game moverIni(game jogo){
 	return jogo;
 }
 
-//ERIC D. <
 int verificaColisao(game jogo){
 	if(jogo.pl.posx == jogo.bot.x && jogo.pl.posy == jogo.bot.y){
 		return 1;
 	}
 	return 0;
-} //ERIC D. >
+} 

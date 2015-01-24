@@ -26,6 +26,7 @@ typedef struct Inimigo{
 
 typedef struct Mapa{
 	char **valor;
+	char parede;
 	int x;
 	int y;
 }mapa;
@@ -38,12 +39,15 @@ typedef struct Jogo{
 	int pontos;
 	int fase;
 }game;
+/* ---------------------------------------------------
 
+ -> MANTENHA SEMPRE ATUALIZADO <-
 
+*/
 
-mapa limpaMatriz(mapa campo);
+game limpaMatriz(game jogo);
 
-mapa insereJogador(game jogo);
+game verificaFase(game jogo);
 
 game verificaPonto(game jogo);
 
@@ -56,7 +60,3 @@ game andaBaixo(game jogo);
 game andaCima(game jogo);
 
 game lerAcao(game jogo, int tecla);
-
-void desenhaCampo(mapa campo);
-
-game insereObjeto(game jogo);
