@@ -1,6 +1,7 @@
 #include "asciiGame.h"
 #include "padroes.c"
 #include "fase.c"
+#include "splashScreen.c"
 
 
 //Aloca espaco necessario para a matriz e coloca um espaco em cada local
@@ -116,7 +117,7 @@ game lerAcao(game jogo, int tecla){
 int main(){
 	mapa campo;
 	campo.parede = 'X';
-	int ch;
+	int ch = 42; //qualquer tecla
 	int cont = 0;
 	
 	objeto obj;	
@@ -147,9 +148,11 @@ int main(){
 	noecho();					/* Don't echo() while we do getch */
 	initCores();
 	
+	printSplash();
+	
 	jogo = iniciaFase1(jogo);
 
-	while ((ch = getch()) != 'c') {
+	do{ //com o do--while ele nao espera uma tecla antes de comecar...
 		
 		jogo = update(jogo, ch);
 
@@ -160,7 +163,7 @@ int main(){
 			jogo = iniciaFase2(jogo);
 		}
  
-	}
+	}while ((ch = getch()) != 'c');
 
 	
 	endwin();			

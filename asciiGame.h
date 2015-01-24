@@ -60,3 +60,5 @@ game andaBaixo(game jogo,char espaco);
 game andaCima(game jogo,char espaco);
 
 game lerAcao(game jogo, int tecla);
+
+void printSplash();
