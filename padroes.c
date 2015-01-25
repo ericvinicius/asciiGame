@@ -4,6 +4,7 @@ void* mallocc(size_t size){
 
 	if(espacoDeMemoria == NULL){
 		printf("Erro Malloc\n");
+		printw("Erro Malloc\n");
 		exit(EXIT_FAILURE);
 	}
 
@@ -28,7 +29,7 @@ void desenhaLife(int vidas){
 
 	while(vez != 0){
 		printw("<> ");
-		vez--;
+		vez--;   
 	}
 	
 	attroff(COLOR_PAIR(3));
@@ -49,35 +50,36 @@ game moverIni(game jogo){
 	inix = jogo.bot.x;
 	iniy = jogo.bot.y;
 
-
+	srand (time(NULL));
 	int andou = rand() % 100;
-	char espaco = ' ';
 
 	if(inix == jogo.obj.x && iniy == jogo.obj.y)
-		espaco = jogo.obj.name;
+		jogo.espaco = jogo.obj.name;
+	else
+		jogo.espaco = ' ';
 	
 	
 	if(inix > posx && andou < 40 && jogo.campo.valor[inix-1][iniy] != jogo.campo.parede ) {
-		jogo.campo.valor[inix][iniy] = espaco;
+		jogo.campo.valor[inix][iniy] = jogo.espaco;
 		jogo.campo.valor[inix-1][iniy] = jogo.bot.name;
 		jogo.bot.x--;
 		return jogo;
 	}
 	if(inix < posx && andou < 40 && jogo.campo.valor[inix+1][iniy] != jogo.campo.parede){
-		jogo.campo.valor[inix][iniy] = espaco;
+		jogo.campo.valor[inix][iniy] = jogo.espaco;
 		jogo.campo.valor[inix+1][iniy] = jogo.bot.name;
 		jogo.bot.x++;
 		return jogo;
 	} 
 	
 	if(iniy > posy && jogo.campo.valor[inix][iniy-1] != jogo.campo.parede){
-		jogo.campo.valor[inix][iniy] = espaco;
+		jogo.campo.valor[inix][iniy] = jogo.espaco;
 		jogo.campo.valor[inix][iniy-1] = jogo.bot.name;
 		jogo.bot.y--;
 		return jogo;
 	}
 	if(iniy < posy && jogo.campo.valor[inix][iniy-1] != jogo.campo.parede){
-		jogo.campo.valor[inix][iniy] = espaco;
+		jogo.campo.valor[inix][iniy] = jogo.espaco;
 		jogo.campo.valor[inix][iniy+1] = jogo.bot.name;
 		jogo.bot.y++;
 		return jogo;

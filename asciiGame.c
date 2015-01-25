@@ -42,9 +42,9 @@ game verificaPonto(game jogo){
 }
 
 //O personagem anda para direita(verificando se nao e uma parece e se ele marcou um ponto)
-game andaDireita(game jogo,char espaco){
+game andaDireita(game jogo){
 	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy+1] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = jogo.espaco;
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy+1] = jogo.pl.name;
 		jogo.pl.posy++;
 		jogo = verificaPonto(jogo);
@@ -53,9 +53,9 @@ game andaDireita(game jogo,char espaco){
 }
 
 //O personagem anda para esquerda(verificando se nao e uma parece e se ele marcou um ponto)
-game andaEsquerda(game jogo,char espaco){
+game andaEsquerda(game jogo){
 	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy-1] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = jogo.espaco;
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy-1] = jogo.pl.name;
 		jogo.pl.posy--;
 		jogo = verificaPonto(jogo);
@@ -64,9 +64,9 @@ game andaEsquerda(game jogo,char espaco){
 }
 
 //O personagem anda para baixo(verificando se nao e uma parece e se ele marcou um ponto)
-game andaBaixo(game jogo,char espaco){
+game andaBaixo(game jogo){
 	if(jogo.campo.valor[jogo.pl.posx+1][jogo.pl.posy] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = jogo.espaco;
 		jogo.campo.valor[jogo.pl.posx+1][jogo.pl.posy] = jogo.pl.name;
 		jogo.pl.posx++;
 		jogo = verificaPonto(jogo);
@@ -75,9 +75,9 @@ game andaBaixo(game jogo,char espaco){
 }
 
 //O personagem anda para cima(verificando se nao e uma parece e se ele marcou um ponto)
-game andaCima(game jogo,char espaco){
+game andaCima(game jogo){
 	if(jogo.campo.valor[jogo.pl.posx-1][jogo.pl.posy] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = jogo.espaco;
 		jogo.campo.valor[jogo.pl.posx-1][jogo.pl.posy] = jogo.pl.name;
 		jogo.pl.posx--;
 		jogo = verificaPonto(jogo);
@@ -89,21 +89,22 @@ game andaCima(game jogo,char espaco){
 game lerAcao(game jogo, int tecla){ 
 
 	//TO-DO : Arrumado problema de apagar o bot ao andar com o char,mas poderia ser melhorado se a variavel espaco fosse integrada na struct jogo
-	char espaco = ' ';
 	if(jogo.pl.posx == jogo.bot.x && jogo.pl.posy == jogo.bot.y)
-		espaco = jogo.bot.name;
+		jogo.espaco = jogo.bot.name;
+	else
+		jogo.espaco = ' ';
 	
 	if(tecla == KEY_RIGHT){
-		jogo = andaDireita(jogo,espaco);
+		jogo = andaDireita(jogo);
 
 	} else if(tecla == KEY_LEFT){
-		jogo = andaEsquerda(jogo,espaco);
+		jogo = andaEsquerda(jogo);
 
 	} else if(tecla == KEY_DOWN){
-		jogo = andaBaixo(jogo,espaco);
+		jogo = andaBaixo(jogo);
 
 	} else if(tecla == KEY_UP){
-		jogo = andaCima(jogo,espaco);
+		jogo = andaCima(jogo);
 	}
 
 	//TO-DO-OK : nem sempre mostra a batida
@@ -139,8 +140,9 @@ int main(){
 	jogo.campo = campo;
 	jogo.pl = one;
 	jogo.pontos = 0;
-	jogo.obj = obj;
 	jogo.bot = bot;
+	jogo.obj = obj;
+	jogo.espaco = ' ';
 
 	initscr();					/* Start curses mode 		*/
 	raw();						/* Line buffering disabled	*/
@@ -149,18 +151,21 @@ int main(){
 	initCores();
 	
 	printSplash();
-	
+		
 	jogo = iniciaFase1(jogo);
 
 	do{ //com o do--while ele nao espera uma tecla antes de comecar...
+		
 		
 		jogo = update(jogo, ch);
 
 		if(jogo.pontos == 1 && cont == 0){	
 			printw("Ganhou! - Vamos para fase 2!\n");
+			getch();
 			cont++;
 			refresh();
 			jogo = iniciaFase2(jogo);
+			jogo = update(jogo, ch);
 		}
  
 	}while ((ch = getch()) != 'c');

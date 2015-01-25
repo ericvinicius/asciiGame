@@ -5,6 +5,7 @@
 
 typedef struct Objeto{
 	char name;
+	char nome;
 	int x;
 	int y;
 }objeto;
@@ -32,12 +33,13 @@ typedef struct Mapa{
 }mapa;
 
 typedef struct Jogo{
-	player pl;
 	mapa campo;
+	player pl;
 	ini bot;
 	objeto obj;
 	int pontos;
 	int fase;
+	char espaco;
 }game;
 /* ---------------------------------------------------
 
@@ -51,13 +53,13 @@ game verificaFase(game jogo);
 
 game verificaPonto(game jogo);
 
-game andaDireita(game jogo,char espaco);
+game andaDireita(game jogo);
 
-game andaEsquerda(game jogo,char espaco);
+game andaEsquerda(game jogo);
 
-game andaBaixo(game jogo,char espaco);
+game andaBaixo(game jogo);
 
-game andaCima(game jogo,char espaco);
+game andaCima(game jogo);
 
 game lerAcao(game jogo, int tecla);
 
