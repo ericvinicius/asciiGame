@@ -34,18 +34,15 @@ game desenhaCampo(game jogo){
 
 			if(jogo.campo.valor[x][y] == jogo.campo.parede){
 				attron(COLOR_PAIR(4));
-
 				if(x != 0)
 					printw("%c ", jogo.campo.valor[x][y]);
-
 				else
 					printw("%c ", jogo.campo.valor[x][y]);
-
 				attroff(COLOR_PAIR(4));
-
 			}else
 				printw("%c ", jogo.campo.valor[x][y]);
-			
+
+
 			if(jogo.fase == 1)
 				jogo = desenhaFase1(jogo, x, y);
 
@@ -122,10 +119,9 @@ game iniciaFase2(game jogo){
 	jogo = insereObjeto(jogo);
 	jogo = desenhaCampo(jogo);
 
-	refresh();
-
 	return jogo;
 }
+
 
 void desenhaCabecalho(game jogo){
 	attron(COLOR_PAIR(1));
@@ -135,7 +131,7 @@ void desenhaCabecalho(game jogo){
 }
 
 game update(game jogo, int ch){
-	int botDifuldade = 0;
+	jogo.bot.dificuldade = 0;
 	
 	clear();
 	desenhaCabecalho(jogo);
@@ -143,15 +139,16 @@ game update(game jogo, int ch){
 	jogo = insereJogador(jogo);
 	
 
-	if(botDifuldade < 70){
+	if(jogo.bot.dificuldade < 70)
 		jogo = moverIni(jogo);
-	}
+	
 
 	jogo = lerAcao(jogo, ch);
 	jogo = desenhaCampo(jogo);
 
 	//TO - DO : criar funcao que modifica estas varaintes do bot
-	botDifuldade = rand() % 100;
+	srand (time(NULL));
+	jogo.bot.dificuldade = rand() % 100;
 
 	if(verificaColisao(jogo)){
 		jogo.pl.life--;
