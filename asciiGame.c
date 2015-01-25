@@ -1,6 +1,7 @@
 #include "asciiGame.h"
 #include "padroes.c"
 #include "fase.c"
+#include "splashScreen.c"
 
 
 //Aloca espaco necessario para a matriz e coloca um espaco em cada local
@@ -11,13 +12,10 @@ game limpaMatriz(game jogo){
 	jogo.campo.valor = mallocc(jogo.campo.x * sizeof(char *));
 	for(x = 0; x <= jogo.campo.x; x++){
 		jogo.campo.valor[x] = mallocc(jogo.campo.y * sizeof(char));
-		// TO - DO : E possivel reduzir o outros dois fors, por um unico aqui!!!
-	}
-
-	for(x = 0; x < jogo.campo.x; x++){
 		for(y = 0; y < jogo.campo.y; y++){
 				jogo.campo.valor[x][y] = ' ';
 		}
+		// TO-DO-OK: E possivel reduzir o outros dois fors, por um unico aqui!!!
 	}
 	return jogo;
 }
@@ -43,10 +41,10 @@ game verificaPonto(game jogo){
 	return jogo;
 }
 
-//O poersonagem anda para direita(verificando se nao e uma parece e se ele marcou um ponto)
-game andaDireita(game jogo){
+//O personagem anda para direita(verificando se nao e uma parece e se ele marcou um ponto)
+game andaDireita(game jogo,char espaco){
 	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy+1] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy+1] = jogo.pl.name;
 		jogo.pl.posy++;
 		jogo = verificaPonto(jogo);
@@ -54,10 +52,10 @@ game andaDireita(game jogo){
 	return jogo;
 }
 
-//O poersonagem anda para esquerda(verificando se nao e uma parece e se ele marcou um ponto)
-game andaEsquerda(game jogo){
+//O personagem anda para esquerda(verificando se nao e uma parece e se ele marcou um ponto)
+game andaEsquerda(game jogo,char espaco){
 	if(jogo.campo.valor[jogo.pl.posx][jogo.pl.posy-1] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy-1] = jogo.pl.name;
 		jogo.pl.posy--;
 		jogo = verificaPonto(jogo);
@@ -65,10 +63,10 @@ game andaEsquerda(game jogo){
 	return jogo;
 }
 
-//O poersonagem anda para baixo(verificando se nao e uma parece e se ele marcou um ponto)
-game andaBaixo(game jogo){
+//O personagem anda para baixo(verificando se nao e uma parece e se ele marcou um ponto)
+game andaBaixo(game jogo,char espaco){
 	if(jogo.campo.valor[jogo.pl.posx+1][jogo.pl.posy] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
 		jogo.campo.valor[jogo.pl.posx+1][jogo.pl.posy] = jogo.pl.name;
 		jogo.pl.posx++;
 		jogo = verificaPonto(jogo);
@@ -76,10 +74,10 @@ game andaBaixo(game jogo){
 	return jogo;
 }
 
-//O poersonagem anda para cima(verificando se nao e uma parece e se ele marcou um ponto)
-game andaCima(game jogo){
+//O personagem anda para cima(verificando se nao e uma parece e se ele marcou um ponto)
+game andaCima(game jogo,char espaco){
 	if(jogo.campo.valor[jogo.pl.posx-1][jogo.pl.posy] != jogo.campo.parede){
-		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = ' ';
+		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = espaco;
 		jogo.campo.valor[jogo.pl.posx-1][jogo.pl.posy] = jogo.pl.name;
 		jogo.pl.posx--;
 		jogo = verificaPonto(jogo);
@@ -88,24 +86,28 @@ game andaCima(game jogo){
 }
 
 //Le acao do usuario chama a funcao que faz ele andar
-game lerAcao(game jogo, int tecla){
+game lerAcao(game jogo, int tecla){ 
 
-	//printw("(%d / %d)", jogo.pl.posx, jogo.pl.posy);
-
+	//TO-DO : Arrumado problema de apagar o bot ao andar com o char,mas poderia ser melhorado se a variavel espaco fosse integrada na struct jogo
+	char espaco = ' ';
+	if(jogo.pl.posx == jogo.bot.x && jogo.pl.posy == jogo.bot.y)
+		espaco = jogo.bot.name;
+	
 	if(tecla == KEY_RIGHT){
-		jogo = andaDireita(jogo);
+		jogo = andaDireita(jogo,espaco);
 
 	} else if(tecla == KEY_LEFT){
-		jogo = andaEsquerda(jogo);
+		jogo = andaEsquerda(jogo,espaco);
 
 	} else if(tecla == KEY_DOWN){
-		jogo = andaBaixo(jogo);
+		jogo = andaBaixo(jogo,espaco);
 
 	} else if(tecla == KEY_UP){
-		jogo = andaCima(jogo);
+		jogo = andaCima(jogo,espaco);
 	}
 
-	//TO - DO : nem sempre mostra a batida
+	//TO-DO-OK : nem sempre mostra a batida
+	// PS: BATE SIM...u,u faca o teste agora
 	if(jogo.pl.posx == jogo.bot.x && jogo.pl.posy == jogo.bot.y )
 		jogo.campo.valor[jogo.pl.posx][jogo.pl.posy] = '@';
 
@@ -115,7 +117,7 @@ game lerAcao(game jogo, int tecla){
 int main(){
 	mapa campo;
 	campo.parede = 'X';
-	int ch;
+	int ch = 42; //qualquer tecla
 	int cont = 0;
 	
 	objeto obj;	
@@ -129,7 +131,7 @@ int main(){
 
 	ini bot;
 	bot.x = 10;
-	bot.y = 15;
+	bot.y = 16;
 	bot.name = '*';
 	bot.dificuldade = 0;
 
@@ -146,9 +148,11 @@ int main(){
 	noecho();					/* Don't echo() while we do getch */
 	initCores();
 	
+	printSplash();
+	
 	jogo = iniciaFase1(jogo);
 
-	while ((ch = getch()) != 'c') {
+	do{ //com o do--while ele nao espera uma tecla antes de comecar...
 		
 		jogo = update(jogo, ch);
 
@@ -159,10 +163,10 @@ int main(){
 			jogo = iniciaFase2(jogo);
 		}
  
-	}
+	}while ((ch = getch()) != 'c');
 
 	
-	endwin();			/* End curses mode */
+	endwin();			
 
 	return 0;
 }

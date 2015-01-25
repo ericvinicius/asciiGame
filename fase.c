@@ -155,11 +155,11 @@ game update(game jogo, int ch){
 
 	if(verificaColisao(jogo)){
 		jogo.pl.life--;
-		botDifuldade = 100;
 		if(jogo.pl.life == -1){
+			printw("\n\t\t\tGAME OVER...");
+			getch();
 			endwin();
 			exit(EXIT_FAILURE);
-
 		}
 	}
 	
